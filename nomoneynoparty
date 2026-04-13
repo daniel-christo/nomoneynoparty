@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>DCS TOOL SYSTEM</title>
+
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&family=Courier+Prime&display=swap" rel="stylesheet">
+
+<style>
+body{
+background:#000;
+color:#fff;
+font-family:'VT323',monospace;
+margin:0;
+overflow:hidden;
+}
+
+body::before{
+content:"";
+position:fixed;
+inset:0;
+background:
+linear-gradient(transparent 95%, rgba(255,255,255,.05) 100%),
+linear-gradient(90deg,transparent 95%, rgba(255,255,255,.05) 100%);
+background-size:3px 3px;
+animation:bgMove 20s linear infinite;
+z-index:-1;
+opacity:.3;
+}
+
+@keyframes bgMove{
+from{transform:translateY(0)}
+to{transform:translateY(100px)}
+}
+
+#welcome{
+position:fixed;
+inset:0;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+background:#000;
+z-index:9999;
+}
+
+.title{
+font-family:'Press Start 2P';
+font-size:26px;
+margin-bottom:40px;
+}
+
+.enter{
+font-family:'Press Start 2P';
+cursor:pointer;
+animation:blink 1s infinite;
+border:1px solid white;
+padding:15px 30px;
+}
+
+.enter:hover{
+background:white;
+color:black;
+}
+
+@keyframes blink{
+50%{opacity:.4}
+}
+
+.boot{
+position:fixed;
+inset:0;
+background:#000;
+padding:30px;
+display:none;
+white-space:pre-line;
+font-size:20px;
+}
+
+.menu{
+position:fixed;
+inset:0;
+display:none;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+gap:25px;
+}
+
+.menu button{
+padding:15px 40px;
+background:#000;
+color:#fff;
+border:1px solid #fff;
+font-family:'Press Start 2P';
+cursor:pointer;
+width:320px;
+}
+
+.menu button:hover{
+background:#fff;
+color:#000;
+}
+
+.tool{
+display:none;
+position:fixed;
+inset:0;
+background:#000;
+overflow:auto;
+padding:20px;
+}
+
+.back{
+position:fixed;
+top:10px;
+left:10px;
+z-index:9999;
+padding:10px 20px;
+background:black;
+color:white;
+border:1px solid white;
+font-family:'Press Start 2P';
+cursor:pointer;
+}
+
+.lock textarea{
+width:100%;
+height:160px;
+background:#000;
+color:#fff;
+border:1px solid #fff;
+padding:10px;
+margin-bottom:15px;
+}
+
+.lock table{
+width:100%;
+border-collapse:collapse;
+margin-top:15px;
+}
+
+.lock th,.lock td{
+border:1px solid #fff;
+padding:8px;
+}
+
+.lock button{
+background:#000;
+border:1px solid #fff;
+color:#fff;
+padding:8px 15px;
+cursor:pointer;
+}
+
+.badge{
+padding:3px 8px;
+border-radius:4px;
+font-size:12px;
+}
+
+.locked{background:#a30000}
+.change{background:#009688}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="welcome">
+<div class="title">DCS TOOL SYSTEM</div>
+<div class="enter" id="enterBtn">▶ ENTER SYSTEM</div>
+</div>
+
+<div class="boot" id="boot"></div>
+
+<div class="menu" id="menu">
+<button onclick="openTool('csv')">CSV MARKETING</button>
+<button onclick="openTool('scatter')">SCATTER MAHJONG</button>
+<button onclick="openTool('lock')">LOCK UNLOCK</button>
+<button onclick="openTool('shortcut')">SHORTCUT</button>
+</div>
+
+<div id="toolContainer" class="tool"></div>
+
+<script>
+
+const welcome = document.getElementById("welcome")
+const boot = document.getElementById("boot")
+const menu = document.getElementById("menu")
+const enterBtn = document.getElementById("enterBtn")
+const toolContainer = document.getElementById("toolContainer")
+
+let entered=false
+
+function enterSystem(){
+if(entered) return
+entered=true
+
+welcome.style.display="none"
+boot.style.display="block"
+
+let text=`Booting DCS System...\nLoading Modules...\nConnecting Server...\nAccess Granted...`
+
+let i=0
+
+let t=setInterval(()=>{
+boot.innerHTML+=text[i]
+i++
+
+if(i>=text.length){
+clearInterval(t)
+setTimeout(()=>{
+boot.style.display="none"
+menu.style.display="flex"
+},800)
+}
+
+},20)
+}
+
+enterBtn.onclick=enterSystem
+
+document.addEventListener("keydown",e=>{
+if(e.key==="Enter") enterSystem()
+})
+
+function openTool(name){
+menu.style.display="none"
+toolContainer.style.display="block"
+
+if(name==="lock") loadLock()
+else if(name==="csv") loadCSV()
+else if(name==="scatter") loadScatter()
+else comingSoon(name)
+}
+
+function backMenu(){
+toolContainer.style.display="none"
+menu.style.display="flex"
+}
+
+function comingSoon(name){
+toolContainer.innerHTML=`
+<button class="back" onclick="backMenu()">BACK</button>
+<h2>${name} Coming Soon</h2>`
+}
+
+function loadCSV(){
+toolContainer.innerHTML=`
+<button class="back" onclick="backMenu()">BACK</button>
+<iframe src="https://daniel-christo.github.io/marketingresolved/" style="width:100%;height:100vh;border:none"></iframe>
+`
+}
+
+function loadScatter(){
+toolContainer.innerHTML=`
+<button class="back" onclick="backMenu()">BACK</button>
+<iframe src="https://daniel-christo.github.io/scatter/" style="width:100%;height:100vh;border:none"></iframe>
+`
+}
+
+function loadLock(){
+
+toolContainer.innerHTML=`
+<button class="back" onclick="backMenu()">BACK</button>
+
+<div class="lock">
+<h2>DCS TOOL - LOCKED & PERGANTIAN DATA</h2>
+
+<textarea id="logInput" placeholder="Paste log disini..."></textarea>
+
+<button id="processBtn">PROCESS</button> <button id="clearBtn">CLEAR</button>
+
+<table>
+<thead>
+<tr>
+<th>No</th>
+<th>User ID</th>
+<th>Kategori</th>
+<th>Detail / Keterangan</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="resultBody"></tbody>
+</table>
+
+<h3>OUTPUT</h3>
+<textarea id="copyOutput"></textarea>
+
+</div>
+`
+
+initLock()
+}
+
+function initLock(){
+
+const logInput  = document.getElementById('logInput');
+const resultBody = document.getElementById('resultBody');
+const processBtn = document.getElementById('processBtn');
+const clearBtn   = document.getElementById('clearBtn');
+const copyOutput = document.getElementById('copyOutput');
+
+function addRow(no,user,kategori,detail,tanggal,staff){
+
+const tr=document.createElement("tr")
+
+tr.innerHTML=`
+
+<td>${no}</td>
+<td>${user}</td>
+<td>${kategori}</td>
+<td>${detail}</td>
+<td><button class="copy-btn">Copy</button></td>`
+
+tr.querySelector(".copy-btn").onclick=()=>{
+
+copyOutput.value=
+`Info ko,
+Staff ${staff}
+Tanggal ${tanggal}
+
+kendala :
+${detail.replace(/<br>/g,"\n").replace(/<[^>]+>/g,"")}`
+
+copyOutput.select()
+document.execCommand("copy")
+}
+
+resultBody.appendChild(tr)
+}
+
+function processLogs(){
+resultBody.innerHTML=""
+let no=1
+
+let lines=logInput.value.split("\n")
+
+lines.forEach(line=>{
+let parts=line.split("\t")
+if(parts.length<6) return
+
+let tanggal=parts[1]
+let staff=parts[2]
+let action=parts[3]
+let detail=parts[4]
+let user=parts[5]
+
+if(/change user info/i.test(action) && /locked/i.test(detail)){
+addRow(
+no++,
+user,
+`<span class="badge locked">LOCKED - form kosong</span>`,
+`Locked pada user id <b>${user}</b> dengan keterangan form kosong`,
+tanggal,
+staff
+)
+}
+
+if(/change user info/i.test(action) && /bank/i.test(detail) && /=>/.test(detail)){
+
+let bankBefore = (detail.match(/bank\s*:\s*([^=]+)=>/i)||[])[1] || "-"
+let bankAfter  = (detail.match(/bank\s*:[^=]+=>\s*([^,]+)/i)||[])[1] || "-"
+
+let rekBefore = (detail.match(/rek\s*:\s*([^=]+)=>/i)||[])[1] || "-"
+let rekAfter  = (detail.match(/rek\s*:[^=]+=>\s*([^,]+)/i)||[])[1] || "-"
+
+addRow(
+no++,
+user,
+`<span class="badge change">PERGANTIAN DATA REKENING</span>`,
+`Pergantian data pada user id <b>${user}</b><br>
+Sebelumnya : ${bankBefore} / ${rekBefore}<br>
+Sesudahnya : ${bankAfter} / ${rekAfter}`,
+tanggal,
+staff
+)
+}
+
+})
+}
+
+processBtn.onclick=processLogs
+
+clearBtn.onclick=()=>{
+resultBody.innerHTML=""
+logInput.value=""
+}
+
+}
+
+</script>
+
+</body>
+</html>
