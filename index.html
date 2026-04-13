@@ -35,22 +35,6 @@ from{transform:translateY(0)}
 to{transform:translateY(100px)}
 }
 
-/* ACCESS DENIED */
-#denied{
-position:fixed;
-inset:0;
-background:#000;
-display:none;
-justify-content:center;
-align-items:center;
-font-family:'Press Start 2P';
-font-size:20px;
-color:#00f;
-z-index:999999;
-}
-
-/* WELCOME */
-
 #welcome{
 position:fixed;
 inset:0;
@@ -186,8 +170,6 @@ font-size:12px;
 
 <body>
 
-<div id="denied">ACCESS DENIED</div>
-
 <div id="welcome">
 <div class="title">DCS TOOL SYSTEM</div>
 <div class="enter" id="enterBtn">▶ ENTER SYSTEM</div>
@@ -281,58 +263,135 @@ toolContainer.innerHTML=`
 `
 }
 
-/* ============================= */
-/* ANTI RIGHT CLICK */
-/* ============================= */
+function loadLock(){
 
-document.addEventListener('contextmenu', e => e.preventDefault());
+toolContainer.innerHTML=`
+<button class="back" onclick="backMenu()">BACK</button>
 
-/* ============================= */
-/* ANTI KEYBOARD */
-/* ============================= */
+<div class="lock">
+<h2>DCS TOOL - LOCKED & PERGANTIAN DATA</h2>
 
-document.onkeydown = function(e) {
+<textarea id="logInput" placeholder="Paste log disini..."></textarea>
 
-if (e.keyCode == 123) return false;
+<button id="processBtn">PROCESS</button> <button id="clearBtn">CLEAR</button>
 
-if (e.ctrlKey && e.shiftKey && e.keyCode == 73) return false;
+<table>
+<thead>
+<tr>
+<th>No</th>
+<th>User ID</th>
+<th>Kategori</th>
+<th>Detail / Keterangan</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody id="resultBody"></tbody>
+</table>
 
-if (e.ctrlKey && e.shiftKey && e.keyCode == 74) return false;
+<h3>OUTPUT</h3>
+<textarea id="copyOutput"></textarea>
 
-if (e.ctrlKey && e.keyCode == 85) return false;
+</div>
+`
 
-};
-
-/* ============================= */
-/* ANTI DEVTOOLS */
-/* ============================= */
-
-setInterval(function() {
-
-const devtools = /./;
-devtools.toString = function() {
-document.getElementById("denied").style.display="flex"
-document.body.innerHTML = document.getElementById("denied").outerHTML
+initLock()
 }
 
-console.log('%c', devtools);
+function initLock(){
 
-}, 1000);
+const logInput  = document.getElementById('logInput');
+const resultBody = document.getElementById('resultBody');
+const processBtn = document.getElementById('processBtn');
+const clearBtn   = document.getElementById('clearBtn');
+const copyOutput = document.getElementById('copyOutput');
 
-/* ============================= */
-/* DEVTOOLS SIZE DETECT */
-/* ============================= */
+function addRow(no,user,kategori,detail,tanggal,staff){
 
-setInterval(function(){
+const tr=document.createElement("tr")
 
-if(window.outerHeight - window.innerHeight > 200 || window.outerWidth - window.innerWidth > 200){
+tr.innerHTML=`
 
-document.getElementById("denied").style.display="flex"
-document.body.innerHTML = document.getElementById("denied").outerHTML
+<td>${no}</td>
+<td>${user}</td>
+<td>${kategori}</td>
+<td>${detail}</td>
+<td><button class="copy-btn">Copy</button></td>`
 
+tr.querySelector(".copy-btn").onclick=()=>{
+
+copyOutput.value=
+`Info ko,
+Staff ${staff}
+Tanggal ${tanggal}
+
+kendala :
+${detail.replace(/<br>/g,"\n").replace(/<[^>]+>/g,"")}`
+
+copyOutput.select()
+document.execCommand("copy")
 }
 
-},1000);
+resultBody.appendChild(tr)
+}
+
+function processLogs(){
+resultBody.innerHTML=""
+let no=1
+
+let lines=logInput.value.split("\n")
+
+lines.forEach(line=>{
+let parts=line.split("\t")
+if(parts.length<6) return
+
+let tanggal=parts[1]
+let staff=parts[2]
+let action=parts[3]
+let detail=parts[4]
+let user=parts[5]
+
+if(/change user info/i.test(action) && /locked/i.test(detail)){
+addRow(
+no++,
+user,
+`<span class="badge locked">LOCKED - form kosong</span>`,
+`Locked pada user id <b>${user}</b> dengan keterangan form kosong`,
+tanggal,
+staff
+)
+}
+
+if(/change user info/i.test(action) && /bank/i.test(detail) && /=>/.test(detail)){
+
+let bankBefore = (detail.match(/bank\s*:\s*([^=]+)=>/i)||[])[1] || "-"
+let bankAfter  = (detail.match(/bank\s*:[^=]+=>\s*([^,]+)/i)||[])[1] || "-"
+
+let rekBefore = (detail.match(/rek\s*:\s*([^=]+)=>/i)||[])[1] || "-"
+let rekAfter  = (detail.match(/rek\s*:[^=]+=>\s*([^,]+)/i)||[])[1] || "-"
+
+addRow(
+no++,
+user,
+`<span class="badge change">PERGANTIAN DATA REKENING</span>`,
+`Pergantian data pada user id <b>${user}</b><br>
+Sebelumnya : ${bankBefore} / ${rekBefore}<br>
+Sesudahnya : ${bankAfter} / ${rekAfter}`,
+tanggal,
+staff
+)
+}
+
+})
+}
+
+processBtn.onclick=processLogs
+
+clearBtn.onclick=()=>{
+resultBody.innerHTML=""
+logInput.value=""
+}
+
+}
 
 </script>
 
