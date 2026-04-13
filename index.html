@@ -395,5 +395,59 @@ logInput.value=""
 
 </script>
 
+  <script>
+
+// ===============================
+// ANTI RIGHT CLICK
+// ===============================
+document.addEventListener('contextmenu', function(e) {
+e.preventDefault();
+});
+
+// ===============================
+// ANTI CTRL + U / CTRL + SHIFT + I / F12
+// ===============================
+document.addEventListener('keydown', function(e) {
+
+if(e.key === "F12"){
+e.preventDefault();
+}
+
+if(e.ctrlKey && e.shiftKey && e.key === "I"){
+e.preventDefault();
+}
+
+if(e.ctrlKey && e.shiftKey && e.key === "J"){
+e.preventDefault();
+}
+
+if(e.ctrlKey && e.shiftKey && e.key === "C"){
+e.preventDefault();
+}
+
+if(e.ctrlKey && e.key === "U"){
+e.preventDefault();
+}
+
+if(e.ctrlKey && e.key === "S"){
+e.preventDefault();
+}
+
+});
+
+// ===============================
+// ANTI INSPECT DEVTOOLS OPEN
+// ===============================
+setInterval(function() {
+var widthThreshold = window.outerWidth - window.innerWidth > 160;
+var heightThreshold = window.outerHeight - window.innerHeight > 160;
+
+if(widthThreshold || heightThreshold){
+document.body.innerHTML = "Access Denied";
+}
+}, 1000);
+
+</script>
+
 </body>
 </html>
