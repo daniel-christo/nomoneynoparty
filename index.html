@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&family=Courier+Prime&display=swap" rel="stylesheet">
 
 <style>
+
 body{
 background:#000;
 color:#fff;
@@ -33,6 +34,31 @@ opacity:.3;
 @keyframes bgMove{
 from{transform:translateY(0)}
 to{transform:translateY(100px)}
+}
+
+/* ACCESS DENIED */
+
+#accessDenied{
+position:fixed;
+inset:0;
+background:black;
+color:white;
+display:none;
+justify-content:center;
+align-items:center;
+z-index:999999;
+font-family:'Press Start 2P';
+text-align:center;
+}
+
+.denied-box h1{
+font-size:40px;
+margin-bottom:20px;
+}
+
+.denied-box p{
+font-size:14px;
+opacity:.7;
 }
 
 #welcome{
@@ -170,6 +196,14 @@ font-size:12px;
 
 <body>
 
+<!-- ACCESS DENIED -->
+<div id="accessDenied">
+<div class="denied-box">
+<h1>ACCESS DENIED</h1>
+<p>Unauthorized Developer Tools Detected</p>
+</div>
+</div>
+
 <div id="welcome">
 <div class="title">DCS TOOL SYSTEM</div>
 <div class="enter" id="enterBtn">▶ ENTER SYSTEM</div>
@@ -188,41 +222,47 @@ font-size:12px;
 
 <script>
 
-// =======================
-// ANTI INSPECT
-// =======================
+/* ACCESS DENIED */
+
+function showDenied(){
+document.getElementById("accessDenied").style.display="flex"
+}
+
+/* ANTI INSPECT */
 
 document.addEventListener('contextmenu', function(e) {
 e.preventDefault();
+showDenied()
 });
 
 document.onkeydown = function(e) {
 
 if (e.keyCode == 123) {
+showDenied()
 return false;
 }
 
 if (e.ctrlKey && e.shiftKey && e.keyCode == 73) {
+showDenied()
 return false;
 }
 
 if (e.ctrlKey && e.shiftKey && e.keyCode == 74) {
+showDenied()
 return false;
 }
 
 if (e.ctrlKey && e.shiftKey && e.keyCode == 67) {
+showDenied()
 return false;
 }
 
 if (e.ctrlKey && e.keyCode == 85) {
+showDenied()
 return false;
 }
 
 };
-
-// =======================
-// SYSTEM
-// =======================
 
 const welcome = document.getElementById("welcome")
 const boot = document.getElementById("boot")
@@ -239,7 +279,10 @@ entered=true
 welcome.style.display="none"
 boot.style.display="block"
 
-let text=`Booting DCS System...\nLoading Modules...\nConnecting Server...\nAccess Granted...`
+let text=`Booting DCS System...
+Loading Modules...
+Connecting Server...
+Access Granted...`
 
 let i=0
 
@@ -307,9 +350,10 @@ toolContainer.innerHTML=`
 <div class="lock">
 <h2>DCS TOOL - LOCKED & PERGANTIAN DATA</h2>
 
-<textarea id="logInput" placeholder="Paste log disini..."></textarea>
+<textarea id="logInput"></textarea>
 
-<button id="processBtn">PROCESS</button> <button id="clearBtn">CLEAR</button>
+<button id="processBtn">PROCESS</button>
+<button id="clearBtn">CLEAR</button>
 
 <table>
 <thead>
@@ -317,7 +361,7 @@ toolContainer.innerHTML=`
 <th>No</th>
 <th>User ID</th>
 <th>Kategori</th>
-<th>Detail / Keterangan</th>
+<th>Detail</th>
 <th>Action</th>
 </tr>
 </thead>
@@ -346,12 +390,12 @@ function addRow(no,user,kategori,detail,tanggal,staff){
 const tr=document.createElement("tr")
 
 tr.innerHTML=`
-
 <td>${no}</td>
 <td>${user}</td>
 <td>${kategori}</td>
 <td>${detail}</td>
-<td><button class="copy-btn">Copy</button></td>`
+<td><button class="copy-btn">Copy</button></td>
+`
 
 tr.querySelector(".copy-btn").onclick=()=>{
 
@@ -371,12 +415,14 @@ resultBody.appendChild(tr)
 }
 
 function processLogs(){
+
 resultBody.innerHTML=""
 let no=1
 
 let lines=logInput.value.split("\n")
 
 lines.forEach(line=>{
+
 let parts=line.split("\t")
 if(parts.length<6) return
 
@@ -386,38 +432,30 @@ let action=parts[3]
 let detail=parts[4]
 let user=parts[5]
 
-if(/change user info/i.test(action) && /locked/i.test(detail)){
+if(/locked/i.test(detail)){
 addRow(
 no++,
 user,
-`<span class="badge locked">LOCKED - form kosong</span>`,
-`Locked pada user id <b>${user}</b> dengan keterangan form kosong`,
+`<span class="badge locked">LOCKED</span>`,
+`Locked user ${user}`,
 tanggal,
 staff
 )
 }
 
-if(/change user info/i.test(action) && /bank/i.test(detail) && /=>/.test(detail)){
-
-let bankBefore = (detail.match(/bank\s*:\s*([^=]+)=>/i)||[])[1] || "-"
-let bankAfter  = (detail.match(/bank\s*:[^=]+=>\s*([^,]+)/i)||[])[1] || "-"
-
-let rekBefore = (detail.match(/rek\s*:\s*([^=]+)=>/i)||[])[1] || "-"
-let rekAfter  = (detail.match(/rek\s*:[^=]+=>\s*([^,]+)/i)||[])[1] || "-"
-
+if(/bank/i.test(detail) && /=>/.test(detail)){
 addRow(
 no++,
 user,
-`<span class="badge change">PERGANTIAN DATA REKENING</span>`,
-`Pergantian data pada user id <b>${user}</b><br>
-Sebelumnya : ${bankBefore} / ${rekBefore}<br>
-Sesudahnya : ${bankAfter} / ${rekAfter}`,
+`<span class="badge change">PERGANTIAN DATA</span>`,
+detail,
 tanggal,
 staff
 )
 }
 
 })
+
 }
 
 processBtn.onclick=processLogs
