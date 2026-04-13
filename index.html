@@ -35,6 +35,22 @@ from{transform:translateY(0)}
 to{transform:translateY(100px)}
 }
 
+/* ACCESS DENIED */
+#denied{
+position:fixed;
+inset:0;
+background:#000;
+display:none;
+justify-content:center;
+align-items:center;
+font-family:'Press Start 2P';
+font-size:20px;
+color:#00f;
+z-index:999999;
+}
+
+/* WELCOME */
+
 #welcome{
 position:fixed;
 inset:0;
@@ -170,6 +186,8 @@ font-size:12px;
 
 <body>
 
+<div id="denied">ACCESS DENIED</div>
+
 <div id="welcome">
 <div class="title">DCS TOOL SYSTEM</div>
 <div class="enter" id="enterBtn">▶ ENTER SYSTEM</div>
@@ -263,189 +281,58 @@ toolContainer.innerHTML=`
 `
 }
 
-function loadLock(){
+/* ============================= */
+/* ANTI RIGHT CLICK */
+/* ============================= */
 
-toolContainer.innerHTML=`
-<button class="back" onclick="backMenu()">BACK</button>
+document.addEventListener('contextmenu', e => e.preventDefault());
 
-<div class="lock">
-<h2>DCS TOOL - LOCKED & PERGANTIAN DATA</h2>
+/* ============================= */
+/* ANTI KEYBOARD */
+/* ============================= */
 
-<textarea id="logInput" placeholder="Paste log disini..."></textarea>
+document.onkeydown = function(e) {
 
-<button id="processBtn">PROCESS</button> <button id="clearBtn">CLEAR</button>
+if (e.keyCode == 123) return false;
 
-<table>
-<thead>
-<tr>
-<th>No</th>
-<th>User ID</th>
-<th>Kategori</th>
-<th>Detail / Keterangan</th>
-<th>Action</th>
-</tr>
-</thead>
-<tbody id="resultBody"></tbody>
-</table>
+if (e.ctrlKey && e.shiftKey && e.keyCode == 73) return false;
 
-<h3>OUTPUT</h3>
-<textarea id="copyOutput"></textarea>
+if (e.ctrlKey && e.shiftKey && e.keyCode == 74) return false;
 
-</div>
-`
+if (e.ctrlKey && e.keyCode == 85) return false;
 
-initLock()
-}
+};
 
-function initLock(){
+/* ============================= */
+/* ANTI DEVTOOLS */
+/* ============================= */
 
-const logInput  = document.getElementById('logInput');
-const resultBody = document.getElementById('resultBody');
-const processBtn = document.getElementById('processBtn');
-const clearBtn   = document.getElementById('clearBtn');
-const copyOutput = document.getElementById('copyOutput');
-
-function addRow(no,user,kategori,detail,tanggal,staff){
-
-const tr=document.createElement("tr")
-
-tr.innerHTML=`
-
-<td>${no}</td>
-<td>${user}</td>
-<td>${kategori}</td>
-<td>${detail}</td>
-<td><button class="copy-btn">Copy</button></td>`
-
-tr.querySelector(".copy-btn").onclick=()=>{
-
-copyOutput.value=
-`Info ko,
-Staff ${staff}
-Tanggal ${tanggal}
-
-kendala :
-${detail.replace(/<br>/g,"\n").replace(/<[^>]+>/g,"")}`
-
-copyOutput.select()
-document.execCommand("copy")
-}
-
-resultBody.appendChild(tr)
-}
-
-function processLogs(){
-resultBody.innerHTML=""
-let no=1
-
-let lines=logInput.value.split("\n")
-
-lines.forEach(line=>{
-let parts=line.split("\t")
-if(parts.length<6) return
-
-let tanggal=parts[1]
-let staff=parts[2]
-let action=parts[3]
-let detail=parts[4]
-let user=parts[5]
-
-if(/change user info/i.test(action) && /locked/i.test(detail)){
-addRow(
-no++,
-user,
-`<span class="badge locked">LOCKED - form kosong</span>`,
-`Locked pada user id <b>${user}</b> dengan keterangan form kosong`,
-tanggal,
-staff
-)
-}
-
-if(/change user info/i.test(action) && /bank/i.test(detail) && /=>/.test(detail)){
-
-let bankBefore = (detail.match(/bank\s*:\s*([^=]+)=>/i)||[])[1] || "-"
-let bankAfter  = (detail.match(/bank\s*:[^=]+=>\s*([^,]+)/i)||[])[1] || "-"
-
-let rekBefore = (detail.match(/rek\s*:\s*([^=]+)=>/i)||[])[1] || "-"
-let rekAfter  = (detail.match(/rek\s*:[^=]+=>\s*([^,]+)/i)||[])[1] || "-"
-
-addRow(
-no++,
-user,
-`<span class="badge change">PERGANTIAN DATA REKENING</span>`,
-`Pergantian data pada user id <b>${user}</b><br>
-Sebelumnya : ${bankBefore} / ${rekBefore}<br>
-Sesudahnya : ${bankAfter} / ${rekAfter}`,
-tanggal,
-staff
-)
-}
-
-})
-}
-
-processBtn.onclick=processLogs
-
-clearBtn.onclick=()=>{
-resultBody.innerHTML=""
-logInput.value=""
-}
-
-}
-
-</script>
-
-  <script>
-
-// ===============================
-// ANTI RIGHT CLICK
-// ===============================
-document.addEventListener('contextmenu', function(e) {
-e.preventDefault();
-});
-
-// ===============================
-// ANTI CTRL + U / CTRL + SHIFT + I / F12
-// ===============================
-document.addEventListener('keydown', function(e) {
-
-if(e.key === "F12"){
-e.preventDefault();
-}
-
-if(e.ctrlKey && e.shiftKey && e.key === "I"){
-e.preventDefault();
-}
-
-if(e.ctrlKey && e.shiftKey && e.key === "J"){
-e.preventDefault();
-}
-
-if(e.ctrlKey && e.shiftKey && e.key === "C"){
-e.preventDefault();
-}
-
-if(e.ctrlKey && e.key === "U"){
-e.preventDefault();
-}
-
-if(e.ctrlKey && e.key === "S"){
-e.preventDefault();
-}
-
-});
-
-// ===============================
-// ANTI INSPECT DEVTOOLS OPEN
-// ===============================
 setInterval(function() {
-var widthThreshold = window.outerWidth - window.innerWidth > 160;
-var heightThreshold = window.outerHeight - window.innerHeight > 160;
 
-if(widthThreshold || heightThreshold){
-document.body.innerHTML = "Access Denied";
+const devtools = /./;
+devtools.toString = function() {
+document.getElementById("denied").style.display="flex"
+document.body.innerHTML = document.getElementById("denied").outerHTML
 }
+
+console.log('%c', devtools);
+
 }, 1000);
+
+/* ============================= */
+/* DEVTOOLS SIZE DETECT */
+/* ============================= */
+
+setInterval(function(){
+
+if(window.outerHeight - window.innerHeight > 200 || window.outerWidth - window.innerWidth > 200){
+
+document.getElementById("denied").style.display="flex"
+document.body.innerHTML = document.getElementById("denied").outerHTML
+
+}
+
+},1000);
 
 </script>
 
