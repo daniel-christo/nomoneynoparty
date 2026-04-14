@@ -196,7 +196,6 @@ font-size:12px;
 
 <body>
 
-<!-- ACCESS DENIED -->
 <div id="accessDenied">
 <div class="denied-box">
 <h1>ACCESS DENIED</h1>
@@ -222,13 +221,9 @@ font-size:12px;
 
 <script>
 
-/* ACCESS DENIED */
-
 function showDenied(){
 document.getElementById("accessDenied").style.display="flex"
 }
-
-/* ANTI INSPECT */
 
 document.addEventListener('contextmenu', function(e) {
 e.preventDefault();
@@ -385,6 +380,17 @@ const processBtn = document.getElementById('processBtn');
 const clearBtn   = document.getElementById('clearBtn');
 const copyOutput = document.getElementById('copyOutput');
 
+function formatTanggal(tanggal){
+
+const bulan = [
+"Januari","Februari","Maret","April","Mei","Juni",
+"Juli","Agustus","September","Oktober","November","Desember"
+]
+
+let t = tanggal.split("-")
+return `${t[0]} ${bulan[parseInt(t[1])-1]} ${t[2]}`
+}
+
 function addRow(no,user,kategori,detail,tanggal,staff){
 
 const tr=document.createElement("tr")
@@ -402,10 +408,10 @@ tr.querySelector(".copy-btn").onclick=()=>{
 copyOutput.value=
 `Info ko,
 Staff ${staff}
-Tanggal ${tanggal}
+Tanggal ${formatTanggal(tanggal)}
 
-kendala :
-${detail.replace(/<br>/g,"\n").replace(/<[^>]+>/g,"")}`
+keterangan :
+Locked pada user id ${user} dengan keterangan ${detail}`
 
 copyOutput.select()
 document.execCommand("copy")
@@ -421,40 +427,54 @@ let no=1
 
 let lines=logInput.value.split("\n")
 
-lines.forEach(line=>{
+for(let i=0;i<lines.length;i++){
 
-let parts=line.split("\t")
-if(parts.length<6) return
+let parts=lines[i].split("\t")
+if(parts.length < 6) continue
 
-let tanggal=parts[1]
+let tanggal=parts[1].split(" ")[0]
 let staff=parts[2]
-let action=parts[3]
 let detail=parts[4]
 let user=parts[5]
 
 if(/locked/i.test(detail)){
+
+let depositText=""
+
+for(let j=i-1;j>=0;j--){
+
+let prev=lines[j].split("\t")
+if(prev.length < 6) continue
+
+if(prev[5]===user && /deposit/i.test(prev[4])){
+
+let match = prev[4].match(/deposit\s*(\d+)/i)
+
+if(match){
+depositText=`Manual Deposit ${match[1]}`
+}
+
+break
+}
+
+}
+
+let finalText = depositText 
+? `pemain invest dan ${depositText}` 
+: detail
+
 addRow(
 no++,
 user,
-`<span class="badge locked">LOCKED</span>`,
-`Locked user ${user}`,
+`<span class="badge locked">LOCK</span>`,
+finalText,
 tanggal,
 staff
 )
+
 }
 
-if(/bank/i.test(detail) && /=>/.test(detail)){
-addRow(
-no++,
-user,
-`<span class="badge change">PERGANTIAN DATA</span>`,
-detail,
-tanggal,
-staff
-)
 }
-
-})
 
 }
 
