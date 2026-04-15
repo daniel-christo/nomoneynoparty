@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="id">
 <head>
 <meta charset="UTF-8">
@@ -15,120 +14,37 @@ background:#000;
 color:#fff;
 font-family:'VT323',monospace;
 margin:0;
-overflow:hidden;
 }
 
-body::before{
-content:"";
-position:fixed;
-inset:0;
-background:
-linear-gradient(transparent 95%, rgba(255,255,255,.05) 100%),
-linear-gradient(90deg,transparent 95%, rgba(255,255,255,.05) 100%);
-background-size:3px 3px;
-animation:bgMove 20s linear infinite;
-z-index:-1;
-opacity:.3;
-}
+/* MENU */
 
-@keyframes bgMove{
-from{transform:translateY(0)}
-to{transform:translateY(100px)}
-}
-
-/* ACCESS DENIED */
-
-#accessDenied{
-position:fixed;
-inset:0;
-background:black;
-color:white;
-display:none;
-justify-content:center;
-align-items:center;
-z-index:999999;
-font-family:'Press Start 2P';
-text-align:center;
-}
-
-.denied-box h1{
-font-size:40px;
-margin-bottom:20px;
-}
-
-.denied-box p{
-font-size:14px;
-opacity:.7;
-}
-
-#welcome{
+.menu{
 position:fixed;
 inset:0;
 display:flex;
 flex-direction:column;
 justify-content:center;
 align-items:center;
-background:#000;
-z-index:9999;
-}
-
-.title{
-font-family:'Press Start 2P';
-font-size:26px;
-margin-bottom:40px;
-}
-
-.enter{
-font-family:'Press Start 2P';
-cursor:pointer;
-animation:blink 1s infinite;
-border:1px solid white;
-padding:15px 30px;
-}
-
-.enter:hover{
-background:white;
-color:black;
-}
-
-@keyframes blink{
-50%{opacity:.4}
-}
-
-.boot{
-position:fixed;
-inset:0;
-background:#000;
-padding:30px;
-display:none;
-white-space:pre-line;
-font-size:20px;
-}
-
-.menu{
-position:fixed;
-inset:0;
-display:none;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-gap:25px;
+gap:20px;
 }
 
 .menu button{
 padding:15px 40px;
 background:#000;
 color:#fff;
-border:1px solid #fff;
+border:1px solid #333;
 font-family:'Press Start 2P';
 cursor:pointer;
 width:320px;
+transition:.2s;
 }
 
 .menu button:hover{
-background:#fff;
-color:#000;
+background:#111;
+transform:translateY(-2px);
 }
+
+/* TOOL */
 
 .tool{
 display:none;
@@ -141,54 +57,120 @@ padding:20px;
 
 .back{
 position:fixed;
-top:10px;
-left:10px;
-z-index:9999;
+top:15px;
+left:15px;
 padding:10px 20px;
-background:black;
+background:#020617;
 color:white;
-border:1px solid white;
+border:1px solid #1e293b;
 font-family:'Press Start 2P';
 cursor:pointer;
+border-radius:6px;
+}
+
+/* LOCK UI */
+
+.lock{
+max-width:1200px;
+margin:auto;
+}
+
+.lock-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+.lock-title{
+font-family:'Press Start 2P';
+font-size:14px;
+opacity:.8;
 }
 
 .lock textarea{
 width:100%;
 height:160px;
-background:#000;
+background:#020617;
 color:#fff;
-border:1px solid #fff;
-padding:10px;
+border:1px solid #111;
+padding:15px;
 margin-bottom:15px;
+border-radius:8px;
+}
+
+.lock button{
+background:#020617;
+border:1px solid #1e293b;
+color:#fff;
+padding:10px 18px;
+margin-right:10px;
+border-radius:8px;
+cursor:pointer;
+transition:.2s;
+}
+
+.lock button:hover{
+background:#0f172a;
+transform:translateY(-1px);
 }
 
 .lock table{
 width:100%;
 border-collapse:collapse;
-margin-top:15px;
+margin-top:20px;
+background:#020617;
+border-radius:10px;
+overflow:hidden;
 }
 
-.lock th,.lock td{
-border:1px solid #fff;
-padding:8px;
+.lock th{
+background:#020617;
+border-bottom:1px solid #111;
+padding:14px;
+font-size:11px;
+font-family:'Press Start 2P';
+opacity:.7;
 }
 
-.lock button{
-background:#000;
-border:1px solid #fff;
-color:#fff;
-padding:8px 15px;
+.lock td{
+padding:14px;
+border-bottom:1px solid #111;
+}
+
+.lock tr:hover{
+background:#020617;
+}
+
+/* CATEGORY */
+
+.category{
+padding:6px 14px;
+border-radius:20px;
+font-size:11px;
+font-weight:bold;
+letter-spacing:.5px;
+}
+
+.cat-change{
+background:#0f766e;
+}
+
+.cat-lock{
+background:#7f1d1d;
+}
+
+.copy-btn{
+background:#020617;
+border:1px solid #1e293b;
+padding:6px 12px;
+border-radius:6px;
 cursor:pointer;
 }
 
-.badge{
-padding:3px 8px;
-border-radius:4px;
-font-size:12px;
+.copy-btn:hover{
+background:#0f172a;
 }
-
-.locked{background:#a30000}
-.change{background:#009688}
 
 </style>
 
@@ -196,120 +178,30 @@ font-size:12px;
 
 <body>
 
-<div id="accessDenied">
-<div class="denied-box">
-<h1>ACCESS DENIED</h1>
-<p>Unauthorized Developer Tools Detected</p>
-</div>
-</div>
-
-<div id="welcome">
-<div class="title">DCS TOOL SYSTEM</div>
-<div class="enter" id="enterBtn">▶ ENTER SYSTEM</div>
-</div>
-
-<div class="boot" id="boot"></div>
-
 <div class="menu" id="menu">
+
 <button onclick="openTool('csv')">CSV MARKETING</button>
 <button onclick="openTool('scatter')">SCATTER MAHJONG</button>
 <button onclick="openTool('lock')">LOCK UNLOCK</button>
-<button onclick="openTool('shortcut')">SHORTCUT</button>
+
 </div>
 
 <div id="toolContainer" class="tool"></div>
 
 <script>
 
-function showDenied(){
-document.getElementById("accessDenied").style.display="flex"
-}
-
-document.addEventListener('contextmenu', function(e) {
-e.preventDefault();
-showDenied()
-});
-
-document.onkeydown = function(e) {
-
-if (e.keyCode == 123) {
-showDenied()
-return false;
-}
-
-if (e.ctrlKey && e.shiftKey && e.keyCode == 73) {
-showDenied()
-return false;
-}
-
-if (e.ctrlKey && e.shiftKey && e.keyCode == 74) {
-showDenied()
-return false;
-}
-
-if (e.ctrlKey && e.shiftKey && e.keyCode == 67) {
-showDenied()
-return false;
-}
-
-if (e.ctrlKey && e.keyCode == 85) {
-showDenied()
-return false;
-}
-
-};
-
-const welcome = document.getElementById("welcome")
-const boot = document.getElementById("boot")
-const menu = document.getElementById("menu")
-const enterBtn = document.getElementById("enterBtn")
-const toolContainer = document.getElementById("toolContainer")
-
-let entered=false
-
-function enterSystem(){
-if(entered) return
-entered=true
-
-welcome.style.display="none"
-boot.style.display="block"
-
-let text=`Booting DCS System...
-Loading Modules...
-Connecting Server...
-Access Granted...`
-
-let i=0
-
-let t=setInterval(()=>{
-boot.innerHTML+=text[i]
-i++
-
-if(i>=text.length){
-clearInterval(t)
-setTimeout(()=>{
-boot.style.display="none"
-menu.style.display="flex"
-},800)
-}
-
-},20)
-}
-
-enterBtn.onclick=enterSystem
-
-document.addEventListener("keydown",e=>{
-if(e.key==="Enter") enterSystem()
-})
+const menu=document.getElementById("menu")
+const toolContainer=document.getElementById("toolContainer")
 
 function openTool(name){
+
 menu.style.display="none"
 toolContainer.style.display="block"
 
+if(name==="csv") loadCSV()
+if(name==="scatter") loadScatter()
 if(name==="lock") loadLock()
-else if(name==="csv") loadCSV()
-else if(name==="scatter") loadScatter()
-else comingSoon(name)
+
 }
 
 function backMenu(){
@@ -317,172 +209,182 @@ toolContainer.style.display="none"
 menu.style.display="flex"
 }
 
-function comingSoon(name){
-toolContainer.innerHTML=`
-<button class="back" onclick="backMenu()">BACK</button>
-<h2>${name} Coming Soon</h2>`
-}
+/* CSV */
 
 function loadCSV(){
+
 toolContainer.innerHTML=`
 <button class="back" onclick="backMenu()">BACK</button>
-<iframe src="https://daniel-christo.github.io/marketingresolved/" style="width:100%;height:100vh;border:none"></iframe>
+
+<iframe 
+src="https://daniel-christo.github.io/marketingresolved/" 
+style="width:100%;height:100vh;border:none">
+</iframe>
 `
+
 }
 
+/* SCATTER */
+
 function loadScatter(){
+
 toolContainer.innerHTML=`
 <button class="back" onclick="backMenu()">BACK</button>
-<iframe src="https://daniel-christo.github.io/scatter/" style="width:100%;height:100vh;border:none"></iframe>
+
+<iframe 
+src="https://daniel-christo.github.io/scatter/" 
+style="width:100%;height:100vh;border:none">
+</iframe>
 `
+
 }
+
+/* LOCK */
 
 function loadLock(){
 
 toolContainer.innerHTML=`
+
 <button class="back" onclick="backMenu()">BACK</button>
 
 <div class="lock">
-<h2>DCS TOOL - LOCKED & PERGANTIAN DATA</h2>
 
-<textarea id="logInput"></textarea>
+<div class="lock-header">
+<div class="lock-title">DCS LOCK / PERGANTIAN DATA</div>
+</div>
 
+<textarea id="logInput" placeholder="Paste log disini..."></textarea>
+
+<div>
 <button id="processBtn">PROCESS</button>
 <button id="clearBtn">CLEAR</button>
+</div>
 
 <table>
+
 <thead>
 <tr>
 <th>No</th>
-<th>User ID</th>
+<th>User</th>
 <th>Kategori</th>
 <th>Detail</th>
 <th>Action</th>
 </tr>
 </thead>
+
 <tbody id="resultBody"></tbody>
+
 </table>
 
-<h3>OUTPUT</h3>
-<textarea id="copyOutput"></textarea>
+<textarea id="copyOutput" style="margin-top:20px;height:120px;"></textarea>
 
 </div>
 `
 
 initLock()
+
 }
 
 function initLock(){
 
-const logInput  = document.getElementById('logInput');
-const resultBody = document.getElementById('resultBody');
-const processBtn = document.getElementById('processBtn');
-const clearBtn   = document.getElementById('clearBtn');
-const copyOutput = document.getElementById('copyOutput');
+const logInput=document.getElementById("logInput")
+const resultBody=document.getElementById("resultBody")
+const copyOutput=document.getElementById("copyOutput")
 
-function formatTanggal(tanggal){
-
-const bulan = [
-"Januari","Februari","Maret","April","Mei","Juni",
-"Juli","Agustus","September","Oktober","November","Desember"
-]
-
-let t = tanggal.split("-")
-return `${t[0]} ${bulan[parseInt(t[1])-1]} ${t[2]}`
-}
-
-function addRow(no,user,kategori,detail,tanggal,staff){
-
-const tr=document.createElement("tr")
-
-tr.innerHTML=`
-<td>${no}</td>
-<td>${user}</td>
-<td>${kategori}</td>
-<td>${detail}</td>
-<td><button class="copy-btn">Copy</button></td>
-`
-
-tr.querySelector(".copy-btn").onclick=()=>{
-
-copyOutput.value=
-`Info ko,
-Staff ${staff}
-Tanggal ${formatTanggal(tanggal)}
-
-keterangan :
-Locked pada user id ${user} dengan keterangan ${detail}`
-
-copyOutput.select()
-document.execCommand("copy")
-}
-
-resultBody.appendChild(tr)
-}
-
-function processLogs(){
+document.getElementById("processBtn").onclick=()=>{
 
 resultBody.innerHTML=""
 let no=1
 
 let lines=logInput.value.split("\n")
 
-for(let i=0;i<lines.length;i++){
+lines.forEach(line=>{
 
-let parts=lines[i].split("\t")
-if(parts.length < 6) continue
+let p=line.split("\t")
+if(p.length<6) return
 
-let tanggal=parts[1].split(" ")[0]
-let staff=parts[2]
-let detail=parts[4]
-let user=parts[5]
+let staff=p[2]
+let action=p[3]
+let detail=p[4]
+let user=p[5]
 
-if(/locked/i.test(detail)){
+/* LOCK */
 
-let depositText=""
+if(/locked/i.test(detail) && !/unlock/i.test(detail)){
 
-for(let j=i-1;j>=0;j--){
+let ket=detail
+.replace(/update info\s*:\s*/i,"")
+.replace(/First Register\s*->\s*/i,"")
+.replace(/Status\s*->\s*Locked/i,"")
 
-let prev=lines[j].split("\t")
-if(prev.length < 6) continue
+let tr=document.createElement("tr")
 
-if(prev[5]===user && /deposit/i.test(prev[4])){
+tr.innerHTML=`
+<td>${no++}</td>
+<td>${user}</td>
+<td><span class="category cat-lock">LOCKED - ${ket}</span></td>
+<td>${ket}</td>
+<td><button class="copy-btn">Copy</button></td>
+`
 
-let match = prev[4].match(/deposit\s*(\d+)/i)
+tr.querySelector("button").onclick=()=>{
 
-if(match){
-depositText=`Manual Deposit ${match[1]}`
-}
+copyOutput.value=
+`Info ko,
+Staff ${staff}
 
-break
-}
+keterangan :
+Locked pada user id ${user} dengan keterangan ${ket}`
 
-}
-
-let finalText = depositText 
-? `pemain invest dan ${depositText}` 
-: detail
-
-addRow(
-no++,
-user,
-`<span class="badge locked">LOCK</span>`,
-finalText,
-tanggal,
-staff
-)
+copyOutput.select()
+document.execCommand("copy")
 
 }
 
-}
+resultBody.appendChild(tr)
 
 }
 
-processBtn.onclick=processLogs
+/* CHANGE */
 
-clearBtn.onclick=()=>{
+if(/change user info/i.test(action) && /=>/.test(detail)){
+
+let tr=document.createElement("tr")
+
+tr.innerHTML=`
+<td>${no++}</td>
+<td>${user}</td>
+<td><span class="category cat-change">PERGANTIAN DATA REKENING</span></td>
+<td>Pergantian Data</td>
+<td><button class="copy-btn">Copy</button></td>
+`
+
+tr.querySelector("button").onclick=()=>{
+
+copyOutput.value=
+`Info ko,
+Staff ${staff}
+
+kendala :
+Pergantian data pada user id ${user}`
+
+copyOutput.select()
+document.execCommand("copy")
+
+}
+
+resultBody.appendChild(tr)
+
+}
+
+})
+
+}
+
+document.getElementById("clearBtn").onclick=()=>{
 resultBody.innerHTML=""
 logInput.value=""
+copyOutput.value=""
 }
 
 }
