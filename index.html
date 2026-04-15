@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>DCS TOOL SYSTEM</title>
 
-<link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&family=Courier+Prime&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet">
 
 <style>
 
@@ -15,8 +15,6 @@ color:#fff;
 font-family:'VT323',monospace;
 margin:0;
 }
-
-/* MENU */
 
 .menu{
 position:fixed;
@@ -36,15 +34,7 @@ border:1px solid #333;
 font-family:'Press Start 2P';
 cursor:pointer;
 width:320px;
-transition:.2s;
 }
-
-.menu button:hover{
-background:#111;
-transform:translateY(-2px);
-}
-
-/* TOOL */
 
 .tool{
 display:none;
@@ -68,24 +58,9 @@ cursor:pointer;
 border-radius:6px;
 }
 
-/* LOCK UI */
-
 .lock{
 max-width:1200px;
 margin:auto;
-}
-
-.lock-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:20px;
-}
-
-.lock-title{
-font-family:'Press Start 2P';
-font-size:14px;
-opacity:.8;
 }
 
 .lock textarea{
@@ -99,65 +74,30 @@ margin-bottom:15px;
 border-radius:8px;
 }
 
-.lock button{
-background:#020617;
-border:1px solid #1e293b;
-color:#fff;
-padding:10px 18px;
-margin-right:10px;
-border-radius:8px;
-cursor:pointer;
-transition:.2s;
-}
-
-.lock button:hover{
-background:#0f172a;
-transform:translateY(-1px);
-}
-
 .lock table{
 width:100%;
 border-collapse:collapse;
 margin-top:20px;
-background:#020617;
-border-radius:10px;
-overflow:hidden;
 }
 
-.lock th{
-background:#020617;
-border-bottom:1px solid #111;
-padding:14px;
-font-size:11px;
-font-family:'Press Start 2P';
-opacity:.7;
-}
-
-.lock td{
-padding:14px;
+.lock th,.lock td{
+padding:12px;
 border-bottom:1px solid #111;
 }
-
-.lock tr:hover{
-background:#020617;
-}
-
-/* CATEGORY */
 
 .category{
-padding:6px 14px;
+padding:6px 12px;
 border-radius:20px;
 font-size:11px;
 font-weight:bold;
-letter-spacing:.5px;
-}
-
-.cat-change{
-background:#0f766e;
 }
 
 .cat-lock{
 background:#7f1d1d;
+}
+
+.cat-change{
+background:#0f766e;
 }
 
 .copy-btn{
@@ -166,10 +106,7 @@ border:1px solid #1e293b;
 padding:6px 12px;
 border-radius:6px;
 cursor:pointer;
-}
-
-.copy-btn:hover{
-background:#0f172a;
+color:#fff;
 }
 
 </style>
@@ -179,11 +116,9 @@ background:#0f172a;
 <body>
 
 <div class="menu" id="menu">
-
 <button onclick="openTool('csv')">CSV MARKETING</button>
 <button onclick="openTool('scatter')">SCATTER MAHJONG</button>
 <button onclick="openTool('lock')">LOCK UNLOCK</button>
-
 </div>
 
 <div id="toolContainer" class="tool"></div>
@@ -209,37 +144,32 @@ toolContainer.style.display="none"
 menu.style.display="flex"
 }
 
-/* CSV */
-
 function loadCSV(){
-
 toolContainer.innerHTML=`
 <button class="back" onclick="backMenu()">BACK</button>
-
-<iframe 
-src="https://daniel-christo.github.io/marketingresolved/" 
-style="width:100%;height:100vh;border:none">
-</iframe>
+<iframe src="https://daniel-christo.github.io/marketingresolved/" style="width:100%;height:100vh;border:none"></iframe>
 `
-
 }
-
-/* SCATTER */
 
 function loadScatter(){
-
 toolContainer.innerHTML=`
 <button class="back" onclick="backMenu()">BACK</button>
-
-<iframe 
-src="https://daniel-christo.github.io/scatter/" 
-style="width:100%;height:100vh;border:none">
-</iframe>
+<iframe src="https://daniel-christo.github.io/scatter/" style="width:100%;height:100vh;border:none"></iframe>
 `
-
 }
 
-/* LOCK */
+function formatTanggal(tgl){
+
+const bulan=[
+"Januari","Februari","Maret","April",
+"Mei","Juni","Juli","Agustus",
+"September","Oktober","November","Desember"
+]
+
+let d=tgl.split(" ")[0].split("-")
+return `${parseInt(d[0])} ${bulan[parseInt(d[1])-1]} ${d[2]}`
+
+}
 
 function loadLock(){
 
@@ -249,19 +179,12 @@ toolContainer.innerHTML=`
 
 <div class="lock">
 
-<div class="lock-header">
-<div class="lock-title">DCS LOCK / PERGANTIAN DATA</div>
-</div>
+<textarea id="logInput"></textarea>
 
-<textarea id="logInput" placeholder="Paste log disini..."></textarea>
-
-<div>
 <button id="processBtn">PROCESS</button>
 <button id="clearBtn">CLEAR</button>
-</div>
 
 <table>
-
 <thead>
 <tr>
 <th>No</th>
@@ -273,16 +196,14 @@ toolContainer.innerHTML=`
 </thead>
 
 <tbody id="resultBody"></tbody>
-
 </table>
 
-<textarea id="copyOutput" style="margin-top:20px;height:120px;"></textarea>
+<textarea id="copyOutput"></textarea>
 
 </div>
 `
 
 initLock()
-
 }
 
 function initLock(){
@@ -296,13 +217,14 @@ document.getElementById("processBtn").onclick=()=>{
 resultBody.innerHTML=""
 let no=1
 
-let lines=logInput.value.split("\n")
+logInput.value.split("\n").forEach(line=>{
 
-lines.forEach(line=>{
+try{
 
 let p=line.split("\t")
 if(p.length<6) return
 
+let tanggal=formatTanggal(p[1])
 let staff=p[2]
 let action=p[3]
 let detail=p[4]
@@ -316,13 +238,15 @@ let ket=detail
 .replace(/update info\s*:\s*/i,"")
 .replace(/First Register\s*->\s*/i,"")
 .replace(/Status\s*->\s*Locked/i,"")
+.replace(/[,\.\s]+$/,"")
+.trim()
 
 let tr=document.createElement("tr")
 
 tr.innerHTML=`
 <td>${no++}</td>
 <td>${user}</td>
-<td><span class="category cat-lock">LOCKED - ${ket}</span></td>
+<td><span class="category cat-lock">LOCKED</span></td>
 <td>${ket}</td>
 <td><button class="copy-btn">Copy</button></td>
 `
@@ -332,8 +256,8 @@ tr.querySelector("button").onclick=()=>{
 copyOutput.value=
 `Info ko,
 Staff ${staff}
-
-keterangan :
+Tanggal ${tanggal}
+kendala :
 Locked pada user id ${user} dengan keterangan ${ket}`
 
 copyOutput.select()
@@ -345,16 +269,25 @@ resultBody.appendChild(tr)
 
 }
 
-/* CHANGE */
+/* CHANGE DATA */
 
-if(/change user info/i.test(action) && /=>/.test(detail)){
+if(/change user info/i.test(action) && /bank\s*:|acc\s*:|rek\s*:/i.test(detail)){
+
+let beforeBank=(detail.match(/bank\s*:\s*(.*?)\s*=>/i)||[])[1]||"-"
+let afterBank=(detail.match(/bank\s*:.*?=>\s*(.*?)(,|$)/i)||[])[1]||"-"
+
+let beforeAcc=(detail.match(/acc\s*:\s*(.*?)\s*=>/i)||[])[1]||"-"
+let afterAcc=(detail.match(/acc\s*:.*?=>\s*(.*?)(,|$)/i)||[])[1]||"-"
+
+let beforeRek=(detail.match(/rek\s*:\s*(.*?)\s*=>/i)||[])[1]||"-"
+let afterRek=(detail.match(/rek\s*:.*?=>\s*(.*?)(,|$)/i)||[])[1]||"-"
 
 let tr=document.createElement("tr")
 
 tr.innerHTML=`
 <td>${no++}</td>
 <td>${user}</td>
-<td><span class="category cat-change">PERGANTIAN DATA REKENING</span></td>
+<td><span class="category cat-change">PERGANTIAN DATA</span></td>
 <td>Pergantian Data</td>
 <td><button class="copy-btn">Copy</button></td>
 `
@@ -364,9 +297,11 @@ tr.querySelector("button").onclick=()=>{
 copyOutput.value=
 `Info ko,
 Staff ${staff}
-
+Tanggal ${tanggal}
 kendala :
-Pergantian data pada user id ${user}`
+Pergantian data pada user id ${user}
+sebelumnya : ${beforeBank}, ${beforeAcc}, ${beforeRek}
+sesudahnya : ${afterBank}, ${afterAcc}, ${afterRek}`
 
 copyOutput.select()
 document.execCommand("copy")
@@ -376,6 +311,8 @@ document.execCommand("copy")
 resultBody.appendChild(tr)
 
 }
+
+}catch(e){}
 
 })
 
